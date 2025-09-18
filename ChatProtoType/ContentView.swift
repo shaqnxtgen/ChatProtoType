@@ -28,6 +28,10 @@ struct ContentView: View {
             Text("Mew-Two!!")
                 .padding()
                 .background(Color.blue, in: RoundedRectangle(cornerRadius: 8))
+            Text("That's right Pokémon")
+                .bold()
+                .padding()
+                .background(Color.gray, in: RoundedRectangle(cornerRadius: 8))
             
         }
         .padding()
