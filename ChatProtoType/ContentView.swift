@@ -9,28 +9,49 @@ import SwiftUI  // Swift gives us UI components
 
 struct ContentView: View {
     // MARK: - State
-    @State private var message = "Knock, knock!"
-    // @State = special SwiftUI property wrapper
-    // "message" will be watched for changes
-    // If it changes, SwiftUI will re-render the body
+    @State private var messages: [String] = ["Knock, knock!"]
+    // Holds a list of messages (like a chat log)
+    // starts with one message already
+    
+    @State private var newMessage: String = ""
+    // Holds the text the user is typing in the TextField
     
     
     var body: some View {
-        VStack(spacing: 16) {   // spacing = space between elements
-                // MARK: - Display current message
-                Text(message)   // Show the current value of "message"
-                    .padding()
-                    .background(Color.blue, in: RoundedRectangle(cornerRadius: 8))
-                    .foregroundColor(.white)   // text color
-            // MARK: - Button
-                Button("Tap me") {
-                         message = "Who's there?"  // Updates the state
-                     }
-                     .padding()
-                     .background(Color.teal, in: RoundedRectangle(cornerRadius: 8))
-                     .foregroundColor(.white)
+        VStack{
+            // MARK: - Messages List
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(messages, id: \.self) {msg in
+                        Text(msg)
+                            .padding()
+                            .background(Color.blue.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                            .frame(maxWidth: .infinity, alignment: .leading) // left align
+                    }
+                }
+                .padding()
+            }
+            
+            Divider() // thin line above input box
+            
+            // MARK: - Input Area
+            HStack {
+                TextField("Type a message...", text: $newMessage)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.vertical, 8)
+                
+                Button("Send") {
+                    if !newMessage.isEmpty {
+                        messages.append(newMessage) // add to messages array
+                        newMessage = ""             // clear input
+                    }
+                }
+                .padding(.horizontal)
+                .background(Color.teal, in: RoundedRectangle(cornerRadius: 8))
+                .foregroundColor(.white)
+            }
+            .padding()
         }
-        .padding()
     }
 }
 
