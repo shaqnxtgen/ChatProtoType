@@ -12,8 +12,9 @@ struct ContentView: View {
     @State private var viewModel = ChatViewModel()
 
     var body: some View {
+        NavigationStack {
         VStack {
-            // MARK: - Messages List
+            // Chat ScrollView
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(viewModel.messages) { msg in
@@ -34,7 +35,7 @@ struct ContentView: View {
 
             Divider()
 
-            // MARK: - Input Area
+            // Input HStack
             HStack {
                 TextField("Type a message...", text: $viewModel.newMessage)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -48,6 +49,14 @@ struct ContentView: View {
                 .foregroundColor(.white)
             }
             .padding()
+        }
+        .navigationTitle("Chat") // Top navigation title
+        .toolbar {
+            // Add a button to navigate to Settings
+            NavigationLink(destination: SettingsView()) {
+                Text("Settings")
+                }
+            }
         }
     }
 }
