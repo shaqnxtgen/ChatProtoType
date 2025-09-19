@@ -10,6 +10,10 @@ import SwiftUI
 struct ChatDetailView: View {
     @Bindable var viewModel: ChatViewModel
     let conversation: Conversation
+    
+    // Local UI state for the edit-sheet
+    @State private var showingEditSheet = false
+    @State private var editTitle: String = ""
 
     var body: some View {
         VStack {
@@ -19,6 +23,10 @@ struct ChatDetailView: View {
                         ForEach(viewModel.conversations[index].messages) { message in
                             MessageBubble(message: message)
                         }
+                    } else {
+                        // Fallback if conversation not found
+                        Text("Conversation not found")
+                            .foregroundColor(.secondary)
                     }
                 }
                 .padding()
@@ -38,9 +46,57 @@ struct ChatDetailView: View {
             }
             .padding()
         }
-        .navigationTitle(conversation.title)
-    }
-}
+        .navigationTitle(currentTitle) // show the current (possibly updated) title
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Edit") {
+                    // Pre-fill the sheet TextField with the current title
+                    editTitle = currentTitle
+                    showingEditSheet = true
+                }
+            }
+        }
+        .sheet(isPresented: $showingEditSheet) {
+                    // Sheet content: TextField + Save/Cancel buttons
+                    NavigationStack {
+                        VStack(spacing: 16) {
+                            Text("Edit Conversation Title")
+                                .font(.headline)
+
+                            TextField("Conversation title", text: $editTitle)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding()
+
+                            HStack {
+                                Button("Cancel") {
+                                    showingEditSheet = false
+                                }
+                                .buttonStyle(.bordered)
+
+                                Spacer()
+
+                                Button("Save") {
+                                    // Call view model to update the conversation title
+                                    viewModel.updateConversationTitle(id: conversation.id, newTitle: editTitle)
+                                    showingEditSheet = false
+                                }
+                                .buttonStyle(.borderedProminent)
+                            }
+                            .padding(.horizontal)
+                            Spacer()
+                        }
+                        .padding()
+                        .navigationTitle("Edit Title")
+                        .navigationBarTitleDisplayMode(.inline)
+                    }
+                }
+            }
+
+            // Computed property to always read the latest title from the view model.
+            private var currentTitle: String {
+                viewModel.conversations.first(where: { $0.id == conversation.id })?.title ?? conversation.title
+            }
+        }
 
 #Preview {
     let vm = ChatViewModel()
