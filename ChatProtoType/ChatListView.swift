@@ -29,6 +29,7 @@ struct ChatListView: View {
                         }
                     }
                 }
+                .onDelete(perform: viewModel.deleteConversation) // New
             }
             .navigationTitle("Conversations")
             .toolbar {

@@ -36,7 +36,13 @@ class ChatViewModel {
         conversations.append(conversation)
         saveConversations()
     }
-
+    
+    // New Method
+    func deleteConversation(at offsets: IndexSet) {
+        conversations.remove(atOffsets: offsets)
+        saveConversations()
+    }
+    
     // Persistence
     private let saveKey = "conversations"
 
