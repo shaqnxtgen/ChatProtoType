@@ -53,7 +53,7 @@ struct ContentView: View {
         .navigationTitle("Chat") // Top navigation title
         .toolbar {
             // Add a button to navigate to Settings
-            NavigationLink(destination: SettingsView()) {
+            NavigationLink(destination: SettingsView(viewModel: viewModel)) {
                 Text("Settings")
                 }
             }

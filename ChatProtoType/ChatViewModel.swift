@@ -15,25 +15,34 @@ import SwiftUI
         }
     }
     var newMessage: String = ""
-
-    private let messagesKey = "chat_messages" // key for UserDefaults
+    
+    // USername property
+    var username: String = "" {
+        didSet {
+            saveUsername() } // save whenever it changes
+    }
+    
+    // Keys for UserDefaults
+    private let messagesKey = "chat_messages"
+    private let usernameKey = "chat_username"
 
     // MARK: - Init
     init() {
         loadMessages() // load saved messages when app starts
+        loadUsername()
     }
 
     // MARK: - Methods
     func sendMessage() {
         guard !newMessage.isEmpty else { return }
 
-        // Add user's message
-        let userMsg = Message(text: newMessage, isUser: true)
+        // Add user's message wit username
+        let userMsg = Message(text: "\(username.isEmpty ? "User" : username): \(newMessage)", isUser: true)
         messages.append(userMsg)
         newMessage = ""
 
         // Add bot reply
-        let botMsg = Message(text: "👋 Hi, I'm your bot!", isUser: false)
+        let botMsg = Message(text: "Bot: 👋 Hi, \(username.isEmpty ? "User" : username)!", isUser: false)
         messages.append(botMsg)
     }
 
@@ -54,5 +63,13 @@ import SwiftUI
         } catch {
             print("Failed to load messages: \(error)")
         }
+    }
+    
+    private func saveUsername() {
+        UserDefaults.standard.set(username, forKey: usernameKey)
+    }
+
+    private func loadUsername() {
+        username = UserDefaults.standard.string(forKey: usernameKey) ?? ""
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var username: String = "User"
+    @Bindable var viewModel: ChatViewModel
 
     var body: some View {
         VStack(spacing: 20) {
@@ -16,7 +16,7 @@ struct SettingsView: View {
                 .font(.largeTitle)
                 .bold()
 
-            TextField("Enter username", text: $username)
+            TextField("Enter username", text: $viewModel.username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
 
@@ -27,5 +27,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    SettingsView(viewModel: ChatViewModel())
 }
