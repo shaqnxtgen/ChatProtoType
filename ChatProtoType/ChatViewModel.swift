@@ -7,69 +7,49 @@
 
 import SwiftUI
 
-@Observable class ChatViewModel {
-    // MARK: - Properties
-    var messages: [Message] = [] {
-        didSet {
-            saveMessages() // save to disk whenever messages change
-        }
-    }
+@Observable
+class ChatViewModel {
+    var conversations: [Conversation] = []
+    var selectedConversation: Conversation?   // active chat
     var newMessage: String = ""
-    
-    // USername property
-    var username: String = "" {
-        didSet {
-            saveUsername() } // save whenever it changes
-    }
-    
-    // Keys for UserDefaults
-    private let messagesKey = "chat_messages"
-    private let usernameKey = "chat_username"
+    var username: String = "Me"
 
-    // MARK: - Init
     init() {
-        loadMessages() // load saved messages when app starts
-        loadUsername()
+        loadConversations()
     }
 
-    // MARK: - Methods
+    // Send a message to the selected conversation
     func sendMessage() {
-        guard !newMessage.isEmpty else { return }
+        guard let index = conversations.firstIndex(where: { $0.id == selectedConversation?.id }),
+              !newMessage.trimmingCharacters(in: .whitespaces).isEmpty
+        else { return }
 
-        // Add user's message wit username
-        let userMsg = Message(text: "\(username.isEmpty ? "User" : username): \(newMessage)", isUser: true)
-        messages.append(userMsg)
+        let message = Message(text: newMessage, isUser: true)
+        conversations[index].messages.append(message)
         newMessage = ""
-
-        // Add bot reply
-        let botMsg = Message(text: "Bot: 👋 Hi, \(username.isEmpty ? "User" : username)!", isUser: false)
-        messages.append(botMsg)
+        saveConversations()
     }
 
-    // MARK: - Persistence
-    private func saveMessages() {
-        do {
-            let data = try JSONEncoder().encode(messages)
-            UserDefaults.standard.set(data, forKey: messagesKey)
-        } catch {
-            print("Failed to save messages: \(error)")
+    // Add a new conversation
+    func addConversation(title: String) {
+        let conversation = Conversation(title: title)
+        conversations.append(conversation)
+        saveConversations()
+    }
+
+    // Persistence
+    private let saveKey = "conversations"
+
+    func saveConversations() {
+        if let data = try? JSONEncoder().encode(conversations) {
+            UserDefaults.standard.set(data, forKey: saveKey)
         }
     }
 
-    private func loadMessages() {
-        guard let data = UserDefaults.standard.data(forKey: messagesKey) else { return }
-        do {
-            messages = try JSONDecoder().decode([Message].self, from: data)
-        } catch {
-            print("Failed to load messages: \(error)")
+    func loadConversations() {
+        if let data = UserDefaults.standard.data(forKey: saveKey),
+           let saved = try? JSONDecoder().decode([Conversation].self, from: data) {
+            conversations = saved
         }
-    }
-    
-    private func saveUsername() {
-        UserDefaults.standard.set(username, forKey: usernameKey)
-    }
-
-    private func loadUsername() {
-        username = UserDefaults.standard.string(forKey: usernameKey) ?? ""
     }
 }

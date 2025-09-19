@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  ContentView.swift renamed to ChatDetailView.swift
 //  ChatProtoType
 //
 //  Created by Shaquille Nelson on 9/18/25.
@@ -7,27 +7,30 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    // MARK: - ViewModel
-    @Bindable var viewModel = ChatViewModel()
+struct ChatDetailView: View {
+    @Bindable var viewModel: ChatViewModel
+    let conversation: Conversation
 
     var body: some View {
         VStack {
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(viewModel.messages) { message in MessageBubble(message: message)
+                    if let index = viewModel.conversations.firstIndex(where: { $0.id == conversation.id }) {
+                        ForEach(viewModel.conversations[index].messages) { message in
+                            MessageBubble(message: message)
+                        }
                     }
                 }
                 .padding()
             }
-                        
-            // Input HStack
+
             HStack {
                 TextField("Type a message...", text: $viewModel.newMessage)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.leading)
 
                 Button("Send") {
+                    viewModel.selectedConversation = conversation
                     viewModel.sendMessage()
                 }
                 .padding(.horizontal)
@@ -35,16 +38,16 @@ struct ContentView: View {
             }
             .padding()
         }
-        .navigationTitle("Chat") // Top navigation title
-//        .toolbar {
-//            // Add a button to navigate to Settings
-//            NavigationLink(destination: SettingsView(viewModel: viewModel)) {
-//                Text("Settings")
-//                }
-//            }
-        }
+        .navigationTitle(conversation.title)
     }
+}
 
 #Preview {
-    ContentView()
+    let vm = ChatViewModel()
+    let sample = Conversation(title: "Sample Chat", messages: [
+        Message(text: "Hello!", isUser: true),
+        Message(text: "Hi there!", isUser: false)
+    ])
+    vm.conversations = [sample]
+    return ChatDetailView(viewModel: vm, conversation: sample)
 }

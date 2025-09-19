@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct ChatProtoTypeApp: App {
+    @State private var viewModel = ChatViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ChatListView(viewModel: viewModel)
         }
     }
 }
