@@ -81,6 +81,7 @@ struct ChatDetailView: View {
                                     showingEditSheet = false
                                 }
                                 .buttonStyle(.borderedProminent)
+                                .disabled(editTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) // validation here for save diabled
                             }
                             .padding(.horizontal)
                             Spacer()
