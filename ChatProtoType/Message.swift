@@ -7,9 +7,17 @@
 
 import Foundation
 
-// Represents a single chat message
-struct Message: Identifiable, Hashable {
-    let id = UUID()       // Unique ID so SwiftUI can track each message
-    let text: String      // The message text
-    let isUser: Bool      // Who sent it (true = user, false = system/bot)
+
+// MARK: - Model
+struct Message: Identifiable, Codable, Hashable {
+    let id: UUID          // unique ID for Identifiable
+    let text: String      // the content of the message
+    let isUser: Bool      // who sent it: true = user, false = bot
+
+    // Custom initializer with default UUID
+    init(id: UUID = UUID(), text: String, isUser: Bool) {
+        self.id = id
+        self.text = text
+        self.isUser = isUser
+    }
 }
