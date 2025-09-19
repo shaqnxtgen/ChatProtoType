@@ -5,46 +5,43 @@
 //  Created by Shaquille Nelson on 9/18/25.
 //
 
-import SwiftUI  // Swift gives us UI components
+import SwiftUI
 
 struct ContentView: View {
-    // MARK: - State
-    @State private var messages: [String] = ["Knock, knock!"]
-    // Holds a list of messages (like a chat log)
-    // starts with one message already
-    
-    @State private var newMessage: String = ""
-    // Holds the text the user is typing in the TextField
-    
-    
+    // MARK: - ViewModel
+    @State private var viewModel = ChatViewModel()
+
     var body: some View {
-        VStack{
+        VStack {
             // MARK: - Messages List
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
-                    ForEach(messages, id: \.self) {msg in
-                        Text(msg)
+                    ForEach(viewModel.messages) { msg in
+                        Text(msg.text)
                             .padding()
-                            .background(Color.blue.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
-                            .frame(maxWidth: .infinity, alignment: .leading) // left align
+                            .background(
+                                msg.isUser
+                                ? Color.teal.opacity(0.2)
+                                : Color.blue.opacity(0.2),
+                                in: RoundedRectangle(cornerRadius: 8)
+                            )
+                            .frame(maxWidth: .infinity,
+                                   alignment: msg.isUser ? .trailing : .leading)
                     }
                 }
                 .padding()
             }
-            
-            Divider() // thin line above input box
-            
+
+            Divider()
+
             // MARK: - Input Area
             HStack {
-                TextField("Type a message...", text: $newMessage)
+                TextField("Type a message...", text: $viewModel.newMessage)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.vertical, 8)
-                
+
                 Button("Send") {
-                    if !newMessage.isEmpty {
-                        messages.append(newMessage) // add to messages array
-                        newMessage = ""             // clear input
-                    }
+                    viewModel.sendMessage()
                 }
                 .padding(.horizontal)
                 .background(Color.teal, in: RoundedRectangle(cornerRadius: 8))
