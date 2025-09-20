@@ -20,10 +20,21 @@ struct ChatDetailView: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     if let index = viewModel.conversations.firstIndex(where: { $0.id == conversation.id }) {
+                        let messages = viewModel.conversations[index].messages
                         ForEach(viewModel.conversations[index].messages) { message in
                             MessageBubble(message: message)
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        if let msgIndex = messages.firstIndex(where: { $0.id == message.id }) {
+                                            viewModel.conversations[index].messages.remove(at: msgIndex)
+                                            viewModel.saveConversations()
+                                        }
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                         }
-                    } else {
+                    }  else {
                         // Fallback if conversation not found
                         Text("Conversation not found")
                             .foregroundColor(.secondary)

@@ -58,6 +58,15 @@ class ChatViewModel {
         saveConversations()
     }
     
+    // Delete individual messages
+
+    func deleteMessage(in conversationID: UUID, at offsets: IndexSet) {
+        if let convIndex = conversations.firstIndex(where: { $0.id == conversationID }) {
+            conversations[convIndex].messages.remove(atOffsets: offsets)
+            saveConversations()
+        }
+    }
+    
     // MARK: - Persistence
     private let saveKey = "conversations"
     
