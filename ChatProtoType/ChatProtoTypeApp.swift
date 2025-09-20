@@ -13,7 +13,17 @@ struct ChatProtoTypeApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ChatListView(viewModel: viewModel)
+            TabView {
+                ChatListView(viewModel: viewModel)
+                    .tabItem {
+                        Label("Chats", systemImage: "bubble.left.and.bubble.right")
+                    }
+                
+                SettingsView(viewModel: viewModel)
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape")
+                    }
+            }
         }
     }
 }
