@@ -17,6 +17,10 @@ struct ChatListView: View {
             List {
                 ForEach(viewModel.conversations) { conversation in
                     NavigationLink(destination: ChatDetailView(viewModel: viewModel, conversation: conversation)) {
+                        HStack {
+                            Text(conversation.avatar) // show emoji avatar
+                                .font(.largeTitle)
+                        }
                         VStack(alignment: .leading) {
                             Text(conversation.title)
                                 .font(.headline)
@@ -64,6 +68,15 @@ struct ChatListView: View {
     }
 }
 
+//#Preview {
+//    ChatListView(viewModel: ChatViewModel())
+//}
+
 #Preview {
-    ChatListView(viewModel: ChatViewModel())
+    let vm = ChatViewModel()
+    vm.conversations = [
+        Conversation(title: "Work", messages: [Message(text: "Hey team!", isUser: true)], avatar: "👩‍💻"),
+        Conversation(title: "Fun", messages: [Message(text: "Party time 🎉", isUser: false)], avatar: "🎨")
+    ]
+    return ChatListView(viewModel: vm)
 }
