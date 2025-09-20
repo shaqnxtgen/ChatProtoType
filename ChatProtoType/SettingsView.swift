@@ -34,7 +34,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
-    @Bindable var viewModel: ChatViewModel
+    @ObservedObject var viewModel: ChatViewModel
 
     var body: some View {
         NavigationStack {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChatListView: View {
-    @Bindable var viewModel: ChatViewModel
+    @ObservedObject var viewModel: ChatViewModel
     @State private var showingNewChat = false
     @State private var newChatTitle = ""
     @State private var searchText = ""

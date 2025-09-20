@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ChatDetailView: View {
-    @Bindable var viewModel: ChatViewModel
+    @ObservedObject var viewModel: ChatViewModel
     let conversation: Conversation
     
     @State private var showingEditSheet = false
@@ -73,7 +73,7 @@ struct ChatDetailView: View {
 }
 
 struct EditConversationTitleSheet: View {
-    @Bindable var viewModel: ChatViewModel
+    @ObservedObject var viewModel: ChatViewModel
     let conversation: Conversation
     @Binding var showingEditSheet: Bool
     @Binding var editTitle: String
