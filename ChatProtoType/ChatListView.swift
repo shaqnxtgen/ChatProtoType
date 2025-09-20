@@ -11,36 +11,57 @@ struct ChatListView: View {
     @Bindable var viewModel: ChatViewModel
     @State private var showingNewChat = false
     @State private var newChatTitle = ""
-
+    @State private var searchText = ""
+    
+    var filteredConversations: [Conversation] {
+        if searchText.isEmpty {
+            return viewModel.conversations
+        } else {
+            return viewModel.conversations.filter { convo in
+                convo.title.localizedCaseInsensitiveContains(searchText) ||
+                convo.messages.contains { $0.text.localizedCaseInsensitiveContains(searchText) }
+            }
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             List {
-                ForEach(viewModel.conversations) { conversation in
+                ForEach(filteredConversations) { conversation in
                     NavigationLink(destination: ChatDetailView(viewModel: viewModel, conversation: conversation)) {
                         HStack {
-                            Text(conversation.avatar) // show emoji avatar
+                            Text(conversation.avatar) // emoji avatar
                                 .font(.largeTitle)
-                        }
-                        VStack(alignment: .leading) {
-                            Text(conversation.title)
-                                .font(.headline)
-                            if let lastMessage = conversation.messages.last {
-                                Text(lastMessage.text)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
+                                .frame(width: 44, height: 44)
+                            
+                            VStack(alignment: .leading) {
+                                Text(conversation.title)
+                                    .font(.headline)
+                                if let lastMessage = conversation.messages.last {
+                                    Text(lastMessage.text)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                } else {
+                                    Text("\(conversation.messages.count) messages")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
                     }
                 }
-                .onDelete(perform: viewModel.deleteConversation) // New
+                .onDelete(perform: viewModel.deleteConversation)
             }
-            .navigationTitle("Conversations")
+            .navigationTitle("Chats")
             .toolbar {
-                Button(action: { showingNewChat = true }) {
-                    Image(systemName: "plus")
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showingNewChat = true }) {
+                        Image(systemName: "plus")
+                    }
                 }
             }
+            .searchable(text: $searchText, prompt: "Search chats")
             .sheet(isPresented: $showingNewChat) {
                 VStack(spacing: 20) {
                     Text("New Conversation")
@@ -67,10 +88,6 @@ struct ChatListView: View {
         }
     }
 }
-
-//#Preview {
-//    ChatListView(viewModel: ChatViewModel())
-//}
 
 #Preview {
     let vm = ChatViewModel()

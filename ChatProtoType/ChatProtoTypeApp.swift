@@ -10,9 +10,15 @@ import SwiftUI
 @main
 struct ChatProtoTypeApp: App {
     @State private var viewModel = ChatViewModel()
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
     
     var body: some Scene {
         WindowGroup {
+            if isLoggedIn {
+                ChatListView(viewModel: viewModel)
+            } else {
+                LoginView()
+            }
             TabView {
                 ChatListView(viewModel: viewModel)
                     .tabItem {

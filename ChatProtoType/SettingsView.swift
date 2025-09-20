@@ -33,6 +33,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
     @Bindable var viewModel: ChatViewModel
 
     var body: some View {
@@ -41,6 +42,12 @@ struct SettingsView: View {
                 Section(header: Text("Profile")) {
                     TextField("Username", text: $viewModel.username)
                         .textFieldStyle(.roundedBorder)
+                }
+                
+                Section(header: Text("User")) {
+                    Button("Logout", role: .destructive) {
+                        isLoggedIn = false
+                    }
                 }
             }
             .navigationTitle("Settings")
